@@ -1,0 +1,138 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myConcat (array, ...args) {
+
+    let returnedArray = array.slice();
+    let length = args.length;
+    let elemLength;
+    
+    if(length === 0) {
+    
+      return returnedArray;
+    
+    }
+  
+    for (let i = 0; i < length; i++) {
+    
+      if(Array.isArray(args[i])) {
+      
+        elemLength = args[i].length;
+      
+        for (let j = 0; j < elemLength; j++) {
+          
+          returnedArray.push(args[i][j]);
+          
+        }
+      
+      }else{
+      
+        returnedArray.push(args[i]);
+      
+      }
+      
+    }
+  
+    return returnedArray;
+  
+  }
+
+  tests({
+
+    //The concat() method is used to merge two or more arrays. This method does not change the existing arrays, but instead returns a new array.
+
+    'Concat returns a new Array instance': function() {
+      let array = [1,2,3];
+      let returnedValue = myConcat(array);
+
+      eq(Array.isArray(returnedValue), true);
+    },
+    'If all parameters are omitted, concat returns a shallow copy of the existing array on which it is called': function() {
+      let array = [1,2,3];
+      let returnedValue = myConcat(array);
+      let expectedValue = array.concat();
+
+      eq(JSON.stringify(returnedValue), JSON.stringify(expectedValue));
+
+      returnedValue.push(3);
+      eq(JSON.stringify([1,2,3]), JSON.stringify(array));
+    },
+    'Concat can take from 1 to N parameters': function() {
+      let array = [1,2,3];
+      let concat1 = [4];
+      let concat2 = [5];
+      let concat3 = [6];
+      let concat4 = [7];
+
+      let expectedValue = [1,2,3,4,5,6,7];
+      let returnedValue = myConcat(array, concat1, concat2, concat3, concat4);
+
+      expectedValue = array.concat(concat1, concat2, concat3, concat4);
+
+      eq(JSON.stringify(returnedValue), JSON.stringify(expectedValue));
+    },
+    'The return array consists of the elements in the object on which it is called, followed in order by, for each argument, the elements of that argument (if the argument is an array) or the argument itself (if the argument is not an array)': function() {
+      let array = [], testString = 'abc', testNum = 123, testArray = [1,2,3];
+      let expectedValue = array.concat(testString, testArray, testNum);
+      let returnedValue = myConcat(array, testString, testArray, testNum);
+
+      eq(JSON.stringify(returnedValue), JSON.stringify(expectedValue));
+    },
+    'It does not recurse into nested array arguments': function() {
+      let array = [1], arr = [[2,3,4],[5,6]];
+      let expectedValue = array.concat(arr);
+      let returnedValue = myConcat(array, arr);
+
+      eq(JSON.stringify(returnedValue), JSON.stringify(expectedValue));
+    },
+    'Object references: concat copies object references into the new array. Both the original and new array refer to the same object. That is, if a referenced object is modified, the changes are visible to both the new and original arrays (test for arrays)': function() {
+      let num1 = [[1]], num2 = [2, [3]];
+      let expectedValue = num1.concat(num2);
+      let numbers = myConcat(num1, num2);
+
+      eq(JSON.stringify(numbers), JSON.stringify(expectedValue));
+    
+      num1[0].push(4);
+      eq(JSON.stringify(numbers), JSON.stringify([[1,4],2,[3]]));
+    },
+    '(test for objects)': function() {
+      let array = [{key0: 0}], obj1 = {key1: 1};
+      let expectedValue = array.concat(obj1);
+      let returnedValue = myConcat(array, obj1);
+
+      eq(JSON.stringify(returnedValue), JSON.stringify(expectedValue));
+
+      array[0].key2 = 2;
+      eq(JSON.stringify(returnedValue), JSON.stringify([{key0: 0, key2: 2}, {key1: 1}]))
+    },
+    'Concat copies the values of strings and numbers into the new array': function() {
+      let array = [], testString = 'a', testNum = 1;
+      let returnedValue = myConcat(array, testString, testNum);
+
+      eq(JSON.stringify(returnedValue), JSON.stringify(['a',1]));
+    },
+    'Test 1: Concatenating two arrays': function() {
+      let letters = ['a', 'b', 'c'], numbers = [1, 2, 3];
+      let returnedValue = myConcat(letters, numbers);
+      let expectedValue = letters.concat(numbers);
+
+      eq(JSON.stringify(returnedValue), JSON.stringify(expectedValue));
+    },
+    'Test 2: Concatenating three arrays': function() {
+      let num1 = [1, 2, 3], num2 = [4, 5, 6], num3 = [7, 8, 9];
+      let numbers = myConcat(num1, num2, num3);
+      let expectedValue = num1.concat(num2, num3);
+
+      eq(JSON.stringify(numbers), JSON.stringify(expectedValue));
+    },
+    'Test 3: Concatenating values to an array': function() {
+      let letters = ['a', 'b', 'c'];
+      let alphaNumeric = myConcat(letters, 1, [2, 3]);
+      let expectedValue = letters.concat(1, [2, 3]);
+
+      eq(JSON.stringify(alphaNumeric), JSON.stringify(expectedValue));
+    }
+
+  });
+</script>
