@@ -1,0 +1,114 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myFill(array, fillingValue, startPosition, endPosition) {
+  
+    let length = array.length;
+    let startIndex = 0;
+    let endIndex = length;
+  
+    if(isNaN(startPosition)) {
+    
+      startPosition = 0;
+    
+    }
+  
+    if(isNaN(endPosition)) {
+    
+      endPosition = 0;
+    
+    }
+  
+    if(arguments.length > 2) {
+    
+      if(startPosition < 0) {
+      
+        startPosition = length + startPosition;
+      
+      }
+    
+      startIndex = startPosition;
+    
+    }
+  
+    if(arguments.length > 3) {
+    
+      if(endPosition > length) {
+      
+        endPosition = length;
+      
+      }
+    
+      if(endPosition < 0) {
+      
+        endPosition = length + endPosition;
+      
+      }
+    
+      endIndex = endPosition;
+    
+    }
+  
+    for (; startIndex < endIndex; startIndex++) {
+      
+      array[startIndex] = fillingValue;
+      
+    }
+  
+    return array;
+  
+  }
+
+  tests({
+
+    //The fill() method changes all elements in an array to a static value, from a start index (default 0) to an end index (default array.length). It returns the modified array.
+
+    'Return an array': function() {
+      let arr = [1,2,3];
+      let returnedArray = myFill(arr);
+
+      eq(Array.isArray(returnedArray), true);
+    },
+    'First argument : a value to fill the array with': function() {
+      let arr = [1,2,3];
+      let returnedArray = myFill(arr, 5);
+
+      eq(JSON.stringify(arr), JSON.stringify([5,5,5]));
+    },
+    'Optional : start index, default 0': function() {
+      let arr = [1,2,3];
+      let returnedArray = myFill(arr, 5, 1);
+
+      eq(JSON.stringify(arr), JSON.stringify([1,5,5]));
+    },
+    'If start is negative, it is treated as array.length + start': function() {
+      let arr = [1,2,3];
+      let returnedArray = myFill(arr, 5, -1);
+
+      eq(JSON.stringify(arr), JSON.stringify([1,2,5]));
+    },
+    'Optional : end index, default arr.length': function() {
+      let arr = [1,2,3,4,5];
+      let returnedArray = myFill(arr, 5 , 1, -2);
+
+      eq(JSON.stringify(arr), JSON.stringify([1,5,5,4,5]));
+    },
+    'Examples : using fill': function() {
+      eq(JSON.stringify(myFill([1, 2, 3], 4)), JSON.stringify([1, 2, 3].fill(4))); // [4, 4, 4]
+      eq(JSON.stringify(myFill([1, 2, 3], 4, 1)), JSON.stringify([1, 2, 3].fill(4, 1))); // [1, 4, 4]
+      eq(JSON.stringify(myFill([1, 2, 3], 4, 1, 2)), JSON.stringify([1, 2, 3].fill(4, 1, 2))); // [1, 4, 3]
+      eq(JSON.stringify(myFill([1, 2, 3], 4, 1, 1)), JSON.stringify([1, 2, 3].fill(4, 1, 1))); // [1, 2, 3]
+      eq(JSON.stringify(myFill([1, 2, 3], 4, 3, 3)), JSON.stringify([1, 2, 3].fill(4, 3, 3))); // [1, 2, 3]
+      eq(JSON.stringify(myFill([1, 2, 3], 4, -3, -2)), JSON.stringify([1, 2, 3].fill(4, -3, -2))); // [4, 2, 3]
+      eq(JSON.stringify(myFill([1, 2, 3], 4, NaN, NaN)), JSON.stringify([1, 2, 3].fill(4, NaN, NaN))); // [1, 2, 3]
+      eq(JSON.stringify(myFill([1, 2, 3], 4, 3, 5)), JSON.stringify([1, 2, 3].fill(4, 3, 5))); // [1, 2, 3]
+      eq(JSON.stringify(myFill(Array(3), 4)), JSON.stringify(Array(3).fill(4))); // [4, 4, 4]
+
+      let arr = Array(3).fill({}) // [{}, {}, {}]
+      eq(JSON.stringify(myFill(Array(3), {})), JSON.stringify(arr));
+      arr[0].hi = "hi" // [{ hi: "hi" }, { hi: "hi" }, { hi: "hi" }]
+    }
+
+  });
+</script>
