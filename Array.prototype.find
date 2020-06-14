@@ -1,0 +1,130 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myFind(array, callback, optionalThisObject) {
+
+    let callbackFunction = callback;
+    let length = array.length;
+
+    if(optionalThisObject) {
+    
+      callbackFunction = callback.bind(optionalThisObject);
+    
+    }
+
+    for (let i = 0; i < length; i++) {
+
+      if(callbackFunction(array[i], i, array)) {
+      
+        return array[i];
+      
+      };
+    
+    }
+
+    return undefined;
+  }
+
+  tests({
+   
+   //The find() method returns the value of the first element in the provided array that satisfies the provided testing function.
+  
+   'There should be a callback function to execute on each value in the array': function() {
+     let array = [1,2,3];
+     let timesCallbackRan = 0;
+     myFind(array, function() {
+       timesCallbackRan++;
+     });
+     eq(array.length, timesCallbackRan);
+   },
+   'Callback first argument: the current element in the array': function() {
+     let array = [1,2,3];
+     let lastElement = 0;
+     myFind(array, function(element) {
+       lastElement = element;
+     });
+     eq(array[array.length-1], lastElement);
+   },
+   'Callback second argument: the index of the current element in the array': function() {
+     let array = [1,2,3];
+     let position = 0;
+     myFind(array, function(element, index) {
+       position = index;
+     });
+     eq(array[position], array[array.length-1]);
+   },
+   'Callback third argument: the array that "find" was called on': function() {
+     let array = [1,2,3];
+     let expectedArray = [];
+     myFind(array, function(element, index, arr) {
+       expectedArray = arr;
+     });
+     eq(array, expectedArray);
+   },
+   'Optional this argument (object)': function() {
+     let array = [1,2,3];
+     let thisObject = {};
+     myFind(array, function(element, index, arr) {
+       thisObject.description = this.description;
+     }, {description: 'optional this object'});
+     eq(thisObject.description, 'optional this object');
+   },
+   'A value should be returned': function() {
+     let array = [1,2,3];
+     let returnedValue = myFind(array, function(element, index, arr) {
+       return element;
+     });
+     eq(returnedValue != undefined, true);
+   },
+   'The return value should be the first element in the array that satisfies the provided testing function': function() {
+     let array = [4,6,8];
+     let returnedValue = myFind(array, function(element, index, arr) {
+       return element > 5;
+     });
+     eq(returnedValue, 6);
+   },
+   'Otherwise, "undefined" is returned': function() {
+     let array = [4,6,8];
+     let returnedValue = myFind(array, function(element, index, arr) {
+       element > 10;
+     });
+     eq(returnedValue, undefined);
+   },
+   'Callback is invoked for every index of the array, not just those with assigned values': function() {
+     let array = [,undefined,null];
+     let timesCallbackRan = 0;
+     myFind(array, function() {
+       timesCallbackRan++;
+     });
+     eq(array.length, timesCallbackRan);
+   },
+   'Callback will not visit any elements added to the array after the call to "find" begins': function() {
+     let array = [4,6,8];
+     let timesCallbackRan = 0;
+     myFind(array, function(element, index, arr) {
+       arr.push(element);
+       timesCallbackRan++;
+     });
+     eq(3, timesCallbackRan);
+   },
+   'If an existing, yet-unvisited element of the array is changed by callback, its value passed to the callback will be the value at the time "find" visits that element\'s index': function() {
+     let array = [4,6,8];
+     let returnedValue = myFind(array, function(element, index, arr) {
+       arr[2]++;
+       return element >= 10;
+     });
+     eq(returnedValue, array[array.length-1]);
+   },
+   'Elements that are deleted are still visited': function() {
+     let array = [4,6,8];
+     let timesCallbackRan = 0;
+     myFind(array, function(element, index, arr) {
+       arr.pop();
+       timesCallbackRan++;
+     });
+     eq(3, timesCallbackRan);
+   }
+  
+  });
+</script>
