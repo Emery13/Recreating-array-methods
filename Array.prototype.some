@@ -1,0 +1,172 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function mySome(array, callback, optionalThisObject) {
+  
+    let callbackFunction = callback;
+    let length = array.length;
+  
+    if(optionalThisObject) {
+    
+      callbackFunction = callback.bind(optionalThisObject);
+    
+    }
+  
+    for (let i = 0; i < length; i++) {
+    
+      if(Object.keys(array)[i]) {
+      
+        if(callbackFunction(array[i], i, array)) {
+        
+          return true;
+        
+        }
+      
+      }
+    
+    }
+  
+    return false;
+    
+  }
+
+  tests({
+   
+   //The some() method tests whether at least one element in the array passes the test implemented by the provided function. It returns a Boolean value.
+   
+   'There should be a callback function running for each element in the array': function() {
+     let array = [1,2,3];
+     let timesCallbackRan = 0;
+     mySome(array, function() {
+       timesCallbackRan++;
+       return false;
+     });
+     eq(array.length, timesCallbackRan);
+   },
+   'Callback first argument: the current element being processed in the array': function() {
+     let array = [1,2,3];
+     let lastElement = 0;
+     mySome(array, function(element) {
+       lastElement = element;
+       return false;
+     });
+     eq(array[array.length-1], lastElement);
+   },
+   'Callback second argument: the index of the current element being processed in the array': function() {
+     let array = [1,2,3];
+     let position = 0;
+     mySome(array, function(element, index) {
+       position = index;
+       return false;
+     });
+     eq(array[position], array[array.length-1]);
+   },
+   'Callback third argument: the array that "some" was called on': function() {
+     let array = [1,2,3];
+     let expectedArray = [];
+     mySome(array, function(element, index, arr) {
+       expectedArray = arr;
+     });
+     eq(array, expectedArray);
+   },
+   'Optional this argument (object)': function() {
+     let array = [1,2,3];
+     let thisObject = {};
+     mySome(array, function(element, index, arr) {
+       thisObject.description = this.description;
+     }, {description: 'optional this object'});
+     eq(thisObject.description, 'optional this object');
+   },
+   'A boolean value should be returned': function() {
+     let array = [1,2,3];
+     let returnedValue = mySome(array, function(element, index, arr) {
+       return element;
+     });
+     eq(typeof returnedValue === "boolean", true);
+   },
+   'The some method executes the provided callback function once for each element present in the array until it finds the one where callback returns a truthy value': function() {
+     let array = [4,6,8];
+     let timesCallbackRan = 0;
+     let returnedValue = mySome(array, function(element, index, arr) {
+       timesCallbackRan++;
+       return element < 5;
+     });
+     eq(timesCallbackRan, 1);
+   },
+   'If such an element is found, the some method immediately returns true': function() {
+     let array = [4,6,8];
+     let timesCallbackRan = 0;
+     let returnedValue = mySome(array, function(element, index, arr) {
+       timesCallbackRan++;
+       return element > 5;
+     });
+     eq(returnedValue, true);
+   },
+   'Otherwise, some returns false': function() {
+     let array = [4,6,8];
+     let returnedValue = mySome(array, function(element, index, arr) {
+       return element > 10;
+     });
+     eq(returnedValue, false);
+   },
+   'Calling this method on an empty array will return false for any condition': function() {
+     let array = [];
+     let returnedValue = mySome(array, function(element, index, arr) {
+       array.push(5);
+       return element > 4;
+     });
+     eq(returnedValue, false);
+   },
+   'Callback is invoked only for indexes of the array with assigned values': function() {
+     let array = [,,,undefined,null];
+     let timesCallbackRan = 0;
+     mySome(array, function() {
+       timesCallbackRan++;
+       return false;
+     });
+     eq(2, timesCallbackRan);
+   },
+   'some does not mutate the array on which it is called': function() {
+     let array = [1,2,3];
+     let arrayInFunction;
+     mySome(array, function(el, i, arr) {
+       arrayInFunction = arr;
+       return false;
+     });
+     eq(array, arrayInFunction);
+   },
+   'The range of elements processed by some is set before the first invocation of callback. Elements appended to the array after the call to some() begins will not be visited by callback': function() {
+     let array = [4,6,8];
+     let timesCallbackRan = 0;
+     mySome(array, function(element, index, arr) {
+       if(array.length < 20) {
+         arr.push(element);
+       }
+       timesCallbackRan++;
+       return false;
+     });
+     eq(3, timesCallbackRan);
+   },
+   'If an existing, unvisited element of the array is changed by callback, its value passed to the visiting callback will be the value at the time that some() visits that element\'s index': function() {
+     let array = [4,6,8];
+     let returnedValue = mySome(array, function(element, index, arr) {
+       arr[2]++;
+       return element >= 10;
+     });
+     eq(returnedValue, [4,6,8].some(function(el, i, passedArr) {passedArr[2]++; return el >= 10;}));
+     eq(returnedValue, true);
+   },
+   'Elements that are deleted are not visited': function() {
+     let array = [4,6,8];
+     let timesCallbackRan = 0;
+     mySome(array, function(element, index, arr) {
+       arr.pop();
+       timesCallbackRan++;
+       return element >= 10;
+     });
+     eq(2, timesCallbackRan);
+   }
+ 
+  });
+</script>
