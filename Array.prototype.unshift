@@ -1,0 +1,49 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myUnshift(array, ...args) {
+
+    array = args.concat(array);
+    let newLength = array.length;
+    return newLength;
+
+  }
+
+  tests({
+
+    //The unshift() method adds one or more elements to the beginning of an array and returns the new length of the array.
+
+    'Returned value : a number': function() {
+      let array = [1,2,3];
+      let returnedValue = myUnshift(array);
+
+      eq(typeof(returnedValue) === 'number', true);
+    },
+    'Returned value : the new length property of the object upon which the method was called': function() {
+      let array = [1,2,3];
+      let returnedValue = myUnshift(array);
+
+      eq(returnedValue, 3);
+    },
+    'The unshift method inserts the given values to the beginning of an array-like object': function() {
+      let array = [1,2,3];
+      let returnedValue = myUnshift(array, 1, 'b');
+
+      eq(returnedValue, 5);
+    },
+    'Examples :': function() {
+      let arr = [1, 2];
+      let returnedValue1 = myUnshift(arr, 0);
+      let returnedValue2 = myUnshift(arr, -2, -1);
+      let returnedValue3 = myUnshift(arr, [-4, -3]);
+      let returnedValue4 = myUnshift(arr, [-7, -6], [-5]);
+
+      eq(returnedValue1, [1, 2].unshift(0));
+      eq(returnedValue2, [1, 2].unshift(-2, -1));
+      eq(returnedValue3, [1, 2].unshift([-4, -3]));
+      eq(returnedValue4, [1, 2].unshift([-7, -6], [-5]));
+    }
+
+  });
+</script>
