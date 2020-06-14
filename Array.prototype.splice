@@ -1,0 +1,282 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function mySplice(array, start, nbOfRemovedEl, ...addedEl) {
+
+    let bufferArray = array.slice();
+    let length = array.length;
+    let returnedArray = [];
+    let end = length;
+    let counter = 0;
+    let arrPart1 = [];
+    let arrPart2 = [];
+    
+    if(arguments.length > 2) {
+    
+      if(nbOfRemovedEl <= 0) {
+      
+        end = 0;
+      
+      }else{
+      
+        end = nbOfRemovedEl;
+      
+      }
+    
+    }
+  
+    if(start < length) {
+    
+      if(start < 0) {
+      
+        if(start + length < 0) {
+        
+          start = 0;
+        
+        }else{
+        
+          start += length;
+        
+        }
+      
+      }
+    
+      for (let i = length-1; i >= 0; i--) {
+      
+        array.pop();
+      
+      }
+    
+      for (let i = 0; i < length; i++) {
+      
+        if(i >= start && counter < end) {
+        
+          returnedArray.push(bufferArray[i]);
+          counter++;
+        
+        }else if(i < start){
+        
+          arrPart1.push(bufferArray[i]);
+        
+        }else{
+        
+          arrPart2.push(bufferArray[i]);
+        
+        }
+      
+      }
+    
+      bufferArray = arrPart1.concat(addedEl, arrPart2);
+    
+      for (let i = 0; i < bufferArray.length; i++) {
+      
+        array.push(bufferArray[i]);;
+      
+      }
+    
+    }else{
+    
+      start = length;
+    
+    }
+  
+    return returnedArray;
+
+  }
+
+  tests({
+
+    //The splice() method changes the contents of an array by removing or replacing existing elements and/or adding new elements in place.
+
+    'Returns an array': function() {
+      eq(Array.isArray(mySplice([1])), true);
+    },
+    'First argument: index at which to start changing the array': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(1)));
+    },
+    'The original array should be modified': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1);
+
+      eq(JSON.stringify(arr), JSON.stringify([1]));
+    },
+    'If greater than the length of the array, start will be set to the length of the array': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 5);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(5)));
+    },
+    'If negative, it will begin that many elements from the end of the array': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, -1);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(-1)));
+    },
+    'If array.length + start is less than 0, it will begin from index 0': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, -5);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(-5)));
+    },
+    'Second argument: An integer indicating the number of elements in the array to remove from start': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1, 1);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(1, 1)));
+    },
+    'If deleteCount is omitted, then all the elements from start to the end of the array will be deleted': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(1)));
+    },
+    'If its value is equal to or larger than array.length - start, then all the elements from start to the end of the array will be deleted': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1, 5);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(1, 5)));
+    },
+    'If deleteCount is 0 or negative, no elements are removed': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1, 0);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(1, 0)));
+    },
+    'Additional arguments: The elements to add to the array, beginning from start': function() {
+      let arr = [1,2,3];
+      let arr2 = [1,2,3];
+
+      let returned = mySplice(arr, 1, 0, 'a', 'b');
+      arr2.splice(1, 0, 'a', 'b');
+
+      eq(JSON.stringify(arr), JSON.stringify(arr2));
+    },
+    'If you do not specify any elements, splice() will only remove elements from the array': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1, 1);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(1, 1)));
+    },
+    'Return value: an array containing the deleted elements': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1, 2);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(1, 2)));
+    },
+    'If only one element is removed, an array of one element is returned': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1, 1);
+
+      eq(returned.length, 1);
+    },
+    'If no elements are removed, an empty array is returned': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1, 0);
+
+      eq(returned.length, 0);
+    },
+    'If the specified number of elements to insert differs from the number of elements being removed, the array\'s length will be different at the end of the call': function() {
+      let arr = [1,2,3];
+      let returned = mySplice(arr, 1, 2, 6, 7, 8, 9);
+
+      eq(JSON.stringify(returned), JSON.stringify([1,2,3].splice(1,2,6,7,8,9)));
+    },
+    'Example 1': function() {
+      let myFish = ['angel', 'clown', 'mandarin', 'sturgeon'];
+      let myFish2 = ['angel', 'clown', 'mandarin', 'sturgeon'];
+
+      let removed = myFish.splice(2, 0, 'drum');
+      let removed2 = mySplice(myFish2, 2, 0, 'drum');
+
+      eq(JSON.stringify(removed), JSON.stringify(removed2));
+      eq(JSON.stringify(myFish), JSON.stringify(myFish2));
+
+      // myFish is ["angel", "clown", "drum", "mandarin", "sturgeon"] 
+      // removed is [], no elements removed
+    },
+    'Example 2': function() {
+      let myFish = ['angel', 'clown', 'mandarin', 'sturgeon'];
+      let myFish2 = ['angel', 'clown', 'mandarin', 'sturgeon'];
+
+      let removed = myFish.splice(2, 0, 'drum', 'guitar');
+      let removed2 = mySplice(myFish2, 2, 0, 'drum', 'guitar');
+
+      eq(JSON.stringify(removed), JSON.stringify(removed2));
+      eq(JSON.stringify(myFish), JSON.stringify(myFish2));
+
+      // myFish is ["angel", "clown", "drum", "guitar", "mandarin", "sturgeon"] 
+      // removed is [], no elements removed
+    },
+    'Example 3': function() {
+      let myFish = ['angel', 'clown', 'drum', 'sturgeon'];
+      let myFish2 = ['angel', 'clown', 'drum', 'sturgeon'];
+
+      let removed = myFish.splice(2, 0, 'trumpet');
+      let removed2 = mySplice(myFish2, 2, 0, 'trumpet');
+
+      eq(JSON.stringify(removed), JSON.stringify(removed2));
+      eq(JSON.stringify(myFish), JSON.stringify(myFish2));
+
+      // myFish is ["angel", "clown", "trumpet", "sturgeon"]
+      // removed is ["drum"]
+    },
+    'Example 4': function() {
+      let myFish = ['angel', 'clown', 'trumpet', 'sturgeon'];
+      let myFish2 = ['angel', 'clown', 'trumpet', 'sturgeon'];
+
+      let removed = myFish.splice(0, 2, 'parrot', 'anemone', 'blue');
+      let removed2 = mySplice(myFish2, 0, 2, 'parrot', 'anemone', 'blue');
+
+      eq(JSON.stringify(removed), JSON.stringify(removed2));
+      eq(JSON.stringify(myFish), JSON.stringify(myFish2));
+
+      // myFish is ["parrot", "anemone", "blue", "trumpet", "sturgeon"] 
+      // removed is ["angel", "clown"]
+    },
+    'Example 5': function() {
+      let myFish = ['parrot', 'anemone', 'blue', 'trumpet', 'sturgeon'];
+      let myFish2 = ['parrot', 'anemone', 'blue', 'trumpet', 'sturgeon'];
+
+      let removed = myFish.splice(2, 2);
+      let removed2 = mySplice(myFish2, 2, 2);
+
+      eq(JSON.stringify(removed), JSON.stringify(removed2));
+      eq(JSON.stringify(myFish), JSON.stringify(myFish2));
+
+      // myFish is ["parrot", "anemone", "sturgeon"] 
+      // removed is ["blue", "trumpet"]
+    },
+    'Example 6': function() {
+      let myFish = ['angel', 'clown', 'mandarin', 'sturgeon'];
+      let myFish2 = ['angel', 'clown', 'mandarin', 'sturgeon'];
+
+      let removed = myFish.splice(-2, 1);
+      let removed2 = mySplice(myFish2, -2, 1);
+
+      eq(JSON.stringify(removed), JSON.stringify(removed2));
+      eq(JSON.stringify(myFish), JSON.stringify(myFish2));
+
+      // myFish is ["angel", "clown", "sturgeon"] 
+      // removed is ["mandarin"]
+    },
+    'Example 7': function() {
+      let myFish = ['angel', 'clown', 'mandarin', 'sturgeon'];
+      let myFish2 = ['angel', 'clown', 'mandarin', 'sturgeon'];
+
+      let removed = myFish.splice(2);
+      let removed2 = mySplice(myFish2, 2);
+
+      eq(JSON.stringify(removed), JSON.stringify(removed2));
+      eq(JSON.stringify(myFish), JSON.stringify(myFish2));
+
+      // myFish is ["angel", "clown"]
+      // removed is ["mandarin", "sturgeon"]
+    }
+
+  });
+
+</script>
