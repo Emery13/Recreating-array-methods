@@ -1,0 +1,44 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myReverse(array) {
+
+    let length = array.length;
+    let bufferArray = [];
+
+    for (let i = 0; i < length; i++) {
+
+      bufferArray[length-1-i] = array[i];
+
+    }
+
+    for (let i = 0; i < length; i++) {
+
+      array[i] = bufferArray[i];
+
+    }
+
+    return array;
+
+  }
+
+  tests({
+
+    //The reverse() method reverses an array in place. The first array element becomes the last, and the last array element becomes the first.
+
+    'returns the reversed array': function() {
+      let arr = [1,2,3];
+      let returnedArray = myReverse(arr);
+
+      eq(JSON.stringify(returnedArray), JSON.stringify([3,2,1]));
+    },
+    'the original array is mutated': function() {
+      let arr = [1,2,3];
+      let returnedArray = myReverse(arr);
+
+      eq(JSON.stringify(arr), JSON.stringify([3,2,1]));
+    }
+  
+  });
+</script>
