@@ -1,0 +1,69 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myPush(array, ...arguments) {
+
+    let argsLength = arguments.length;
+    let length = array.length;
+    
+    for (let i = 0; i < argsLength; i++) {
+      
+      array[length] = arguments[i];
+      length++;
+    
+    }
+  
+    return length;
+
+  }
+
+  tests({
+
+    //The push() method adds one or more elements to the end of an array and returns the new length of the array.
+
+    'It should return a number': function() {
+      let arr = [1,2,3];
+      let result = myPush(arr);
+      
+      eq(typeof(result) === 'number', true);
+    },
+    'That returned number should be the array\'s length': function() {
+      let arr = [1,2,3];
+      let result = myPush(arr);
+
+      eq(result, [1,2,3].push());
+    },
+    'The push method appends values to an array - 1': function() {
+      let arr = [1,2,3];
+      let result = myPush(arr, 4);
+
+      eq(result, [1,2,3].push(4));
+    },    
+    'The push method appends values to an array - 2': function() {
+      let arr = [1,2,3];
+      let result = myPush(arr, 4, 5, 6, 7);
+
+      eq(result, [1,2,3].push(4, 5, 6, 7));
+    },
+    'If empty array, the elements are still pushed': function() {
+      let arr = [];
+      let result = myPush(arr, 1,2,3);
+
+      eq(result, [].push(1,2,3));
+    },
+    'Arrays and objects can also be pushed': function() {
+      let arr = [1,2,3];
+      let result = myPush(arr, [1,2,3], 'string', {key: 'value'}, true);
+
+      eq(result, [1,2,3].push([1,2,3], 'string', {key: 'value'}, true));
+    },
+    'Undefined and null values can also be pushed': function() {
+      let arr = [1,2,3];
+      let result = myPush(arr, undefined, null);
+
+      eq(result, [1,2,3].push(undefined, null));
+    }
+
+  });
+</script>
