@@ -1,0 +1,61 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myShift(array) {
+
+    let length = array.length;
+    let firstElement = array[0];
+    
+    
+    if(length === 0) {
+    
+      return undefined;
+    
+    }
+  
+    for (let i = 0; i < length; i++) {
+    
+      array[i] = array[i+1];
+    
+    }
+  
+    array.length = length -1;
+  
+    return firstElement;
+
+  }
+
+  tests({
+
+    //The shift() method removes the first element from an array and returns that removed element. This method changes the length of the array.
+
+    'Returned value : The first element from the array': function() {
+      let arr = [1,2,3];
+      let returnedValue = myShift(arr);
+
+      eq(returnedValue, 1);
+    },
+    'undefined if the array is empty': function() {
+      let arr = [];
+      let returnedValue = myShift(arr);
+
+      eq(returnedValue, undefined);
+    },
+    'The shift method removes the element at the zeroeth index and shifts the values at consecutive indexes down': function() {
+      let arr = [1,2,3];
+      let returnedValue = myShift(arr);
+
+      eq(returnedValue, 1);
+      eq(JSON.stringify(arr), JSON.stringify([2,3]));
+    },
+    'Example 1 : Removing an element from an array': function() {
+      let myFish = ['angel', 'clown', 'mandarin', 'surgeon'];
+      let shifted = myShift(myFish);
+
+      eq(shifted, 'angel');
+      eq(JSON.stringify(myFish), JSON.stringify(['clown', 'mandarin', 'surgeon']));
+    }
+
+  });
+</script>
