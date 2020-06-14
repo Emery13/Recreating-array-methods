@@ -1,0 +1,143 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myIncludes(array, element, startingPosition) {
+  
+    let length = array.length;
+    let startingIndex = 0;
+  
+    if(startingPosition) {
+    
+      if(startingPosition < 0) {
+      
+        startingIndex = length - Math.abs(startingPosition);
+      
+      }else{
+      
+        startingIndex = startingPosition;
+      
+      }
+    
+    }
+  
+    for (; startingIndex < length; startingIndex++) {
+    
+      if(Number.isNaN(element)) {
+      
+        if(Number.isNaN(array[startingIndex])) {
+        
+          return true;
+        
+        }
+      
+      }
+    
+      if(array[startingIndex] === element) {
+      
+        return true;
+      
+      }
+      
+    }
+  
+    return false;
+  
+  }
+
+  tests({
+
+    //The includes() method determines whether an array includes a certain value among its entries, returning true or false as appropriate.
+
+    'First parameter: the value to search for': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array, 2), true);
+    },
+    'Return value: a boolean': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array), false);
+    },
+    'True if the value valueToFind is found within the array': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array, 3), array.includes(3));
+    },
+    'False otherwise or if no searched value is set': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array, 5), array.includes(5));
+      eq(myIncludes(array), array.includes());
+    },
+    'When comparing strings and characters, includes() is case-sensitive': function() {
+      let array = ['a','b','c','d'];
+      eq(myIncludes(array, 'D'), array.includes('D'));
+      eq(myIncludes(array, 'd'), array.includes('d'));
+    },
+    'Optional: the position in the array at which to begin searching for the value to find': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array, 1), array.includes(1));
+      eq(myIncludes(array, 1, 1), array.includes(1, 1));
+    },
+    'The first character to be searched is found at fromIndex for positive values': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array, 3), array.includes(3));
+      eq(myIncludes(array, 3, 3), array.includes(3, 3));
+    },
+    'or at arr.length - fromIndex for negative values': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array, 3, -1), array.includes(3, -1));
+    },
+    'If the optional position is greater than array.length, false is returned': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array, 3, 5), array.includes(3, 5));
+      eq(myIncludes(array, 3, 5), false);
+    },
+    'Defaults to 0': function() {
+      let array = [1,2,3,4];
+      eq(myIncludes(array, 1), array.includes(1));
+      eq(myIncludes(array, 1), true);
+    },
+    'Values of zero are all considered to be equal, regardless of sign. (That is, -0 is considered to be equal to both 0 and +0)': function() {
+      let array = [0,2,3,4];
+      eq(myIncludes(array, -0), true);
+      eq(myIncludes(array, +0), true);
+      eq(myIncludes(array, 0), true);
+    },
+    'Strict equality is used': function() {
+      let array = [0,2,3,4];
+      eq(myIncludes(array, 2), true);
+      eq(myIncludes(array, '3'), false);
+    },
+    'false is not considered to be the same as 0': function() {
+      let array = [false,2,3,4];
+      eq(myIncludes(array, 0), false);
+
+      let array2 = [0,2,3,4];
+      eq(myIncludes(array2, false), false);
+    },
+    'Example 1': function() {
+      eq(myIncludes([1, 2, 3], 2), true);      // true
+      eq(myIncludes([1, 2, 3], 4), false);      // false
+      eq(myIncludes([1, 2, 3], 3, 3), false);   // false
+      eq(myIncludes([1, 2, 3], 3, -1), true);  // true
+      eq(myIncludes([1, 2, NaN], NaN), true);  // true
+    },
+    'Example 2: fromIndex is greater than or equal to the array length': function() {
+      let arr = ['a', 'b', 'c']
+
+      eq(myIncludes(arr, 'c', 3), false);    // false
+      eq(myIncludes(arr, 'c', 100), false);  // false
+    },
+    'Example 3: Computed index is less than 0': function() {
+      // array length is 3
+      // fromIndex is -100
+      // computed index is 3 + (-100) = -97
+
+      let arr = ['a', 'b', 'c']
+
+      eq(myIncludes(arr, 'a', -100), true);  // true
+      eq(myIncludes(arr, 'b', -100), true);  // true
+      eq(myIncludes(arr, 'c', -100), true);  // true
+      eq(myIncludes(arr, 'a', -2), false);  // false
+    }
+  
+  });
+</script>
