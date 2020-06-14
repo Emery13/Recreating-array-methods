@@ -1,0 +1,127 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myJoin(array, separator) {
+
+    let returnedString = '';
+    let placeholder = ','
+    let firstItem;
+    let buffer;
+    let length = array.length;
+    
+    if(length === 0) {
+    
+      return '';
+    
+    }else{
+    
+      for (let j = 0; j < length; j++) {
+      
+        if(array[j] === undefined || array[j] === null || array[j] === []) {
+        
+          array[j] = '';
+        
+        }
+        
+      }
+    
+      firstItem = array[0].toString();
+    
+    }
+  
+    if(arguments.length > 1) {
+    
+      if(separator === '') {
+      
+        placeholder = '';  
+      
+      }else{
+      
+        placeholder = separator.toString();
+      
+      }
+    
+    }
+  
+    for (let i = 1; i < length; i++) {
+      
+      if(i === 1) {
+      
+      buffer = array[i].toString();
+      returnedString = firstItem.concat(placeholder, buffer);
+      
+      }else{
+      
+        buffer = array[i].toString();
+        returnedString = returnedString.concat(placeholder, buffer);
+      
+      }
+    
+    }
+  
+    return returnedString;
+
+  }
+
+  tests({
+
+    //The join() method creates and returns a new string by concatenating all of the elements in an array (or an array-like object), separated by commas or a specified separator string. If the array has only one item, then that item will be returned without using the separator.
+
+    'The return value is of type string': function() {
+      let arr = ['a', 'b', 'c', 1, 2, 3];
+      let returnedString = myJoin(arr);
+
+      eq(typeof(returnedString) === 'string', true);
+    },
+    'If arr.length is 0, an empty string is returned': function() {
+      let arr = [];
+      let returnedString = myJoin(arr);
+
+      eq(JSON.stringify(returnedString), JSON.stringify(''));
+    },
+    'Otherwise, a string with all array elements joined and separated by a comma is returned': function() {
+      let arr = ['a', 'b', 'c', 1, 2, 3];
+      let returnedString = myJoin(arr);
+
+      eq(JSON.stringify(returnedString), JSON.stringify(arr.join()));
+    },
+    'Optional : a separator that specifies a string to separate each pair of adjacent elements of the array': function() {
+      let arr = ['a', 'b', 'c', 1, 2, 3];
+      let returnedString = myJoin(arr, '-');
+
+      eq(JSON.stringify(returnedString), JSON.stringify(arr.join('-')));
+    },
+    'The separator is converted to a string if necessary': function() {
+      let arr = ['a', 'b', 'c', 1, 2, 3];
+      let returnedString = myJoin(arr, 1);
+
+      eq(JSON.stringify(returnedString), JSON.stringify(arr.join(1)));
+    },
+    'If separator is an empty string, all elements are joined without any characters in between them': function() {
+      let arr = ['a', 'b', 'c', 1, 2, 3];
+      let returnedString = myJoin(arr, '');
+
+      eq(JSON.stringify(returnedString), JSON.stringify(arr.join('')));
+    },
+    'If an element is undefined, null or an empty array [], it is converted to an empty string': function() {
+      let arr = [undefined,, null, [], 2, 3];
+      let returnedString = myJoin(arr);
+
+      eq(JSON.stringify(returnedString), JSON.stringify(arr.join()));
+    },
+    'Example 1: Joining an array four different ways': function() {
+      let a = ['Wind', 'Water', 'Fire'];
+      let returnedString1 = myJoin(a);
+      let returnedString2 = myJoin(a, ', ');
+      let returnedString3 = myJoin(a, ' + ');
+      let returnedString4 = myJoin(a, '');
+
+      eq(JSON.stringify(returnedString1), JSON.stringify(a.join()));
+      eq(JSON.stringify(returnedString2), JSON.stringify(a.join(', ')));
+      eq(JSON.stringify(returnedString3), JSON.stringify(a.join(' + ')));
+      eq(JSON.stringify(returnedString4), JSON.stringify(a.join('')));
+    }
+  
+  });
+</script>
