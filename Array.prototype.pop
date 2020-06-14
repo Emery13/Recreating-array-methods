@@ -1,0 +1,55 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function myPop(array) {
+
+    let length = array.length;
+    let buffer = array[length-1];
+    
+    if(length === 0) {
+    
+      return undefined;
+    
+    }
+  
+    array.length = length-1;
+  
+    return buffer;
+
+  }
+
+  tests({
+
+    //The pop() method removes the last element from an array and returns that element. This method changes the length of the array.
+
+    'The returned value should be the last element of the array': function() {
+      let arr = [1,2,3];
+      let returnedValue = myPop(arr);
+
+      eq(returnedValue, 3);
+    },
+    'If the array is empty, it should be undefined': function() {
+      let arr = [];
+      let returnedValue = myPop(arr);
+
+      eq(returnedValue, undefined);
+    },
+    'Pop should remove the last element of the array': function() {
+      let arr = ['a','b','c'];
+      let returnedValue = myPop(arr);
+
+      eq(returnedValue, 'c');
+      eq(arr.length, 2);
+      eq(JSON.stringify(arr), JSON.stringify(['a','b']));
+    },
+    'Example 1': function() {
+      let myFish = ['angel', 'clown', 'mandarin', 'sturgeon'];
+      let popped = myPop(myFish);
+
+      eq(JSON.stringify(myFish), JSON.stringify(['angel', 'clown', 'mandarin']));
+      eq(JSON.stringify(popped), JSON.stringify('sturgeon'));
+    }
+
+  });
+</script>
