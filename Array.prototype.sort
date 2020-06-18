@@ -1,0 +1,224 @@
+<script src="simpletest.js"></script>
+<body></body>
+<script>
+
+  function mySort(array, callbackStringCompare, callbackNumberCompare) {
+
+    let buffer = 0;
+    let callbackReturnedValue;
+
+
+    /*Definition of ascending ordering function using charCodeAt*/
+    function ascendingRecursiveCheck(array, arrayIndex, charCodeAtIndex) {
+
+      if(array[arrayIndex] === undefined || array[arrayIndex+1] === undefined) {
+
+        if(array[arrayIndex] === undefined && array[arrayIndex+1] != undefined) {
+
+          array[arrayIndex] = array[arrayIndex+1];
+          array[arrayIndex+1] = undefined;
+
+        }
+
+      }else{
+
+        if(array[arrayIndex].toString().charCodeAt(charCodeAtIndex) && !array[arrayIndex+1].toString().charCodeAt(charCodeAtIndex)) {
+
+          buffer = array[arrayIndex];
+          array[arrayIndex] = array[arrayIndex+1];
+          array[arrayIndex+1] = buffer;
+        
+        }else if(array[arrayIndex].toString().charCodeAt(charCodeAtIndex) && array[arrayIndex+1].toString().charCodeAt(charCodeAtIndex)) {
+        
+          if(array[arrayIndex].toString().charCodeAt(charCodeAtIndex) > array[arrayIndex+1].toString().charCodeAt(charCodeAtIndex)) {
+          
+            buffer = array[arrayIndex];
+            array[arrayIndex] = array[arrayIndex+1];
+            array[arrayIndex+1] = buffer;
+          
+          }else if(array[arrayIndex].toString().charCodeAt(charCodeAtIndex) === array[arrayIndex+1].toString().charCodeAt(charCodeAtIndex)) {
+          
+            ascendingRecursiveCheck(array, arrayIndex, charCodeAtIndex+1);
+          
+          }
+        
+        }
+
+      }
+
+    }
+
+
+    /*Sorting numbers in an ascending order*/
+    function ascendingNumberSort(array, arrayIndex, charCodeAtIndex) {
+
+      if(array[arrayIndex] === undefined || array[arrayIndex+1] === undefined) {
+
+        if(array[arrayIndex] === undefined && array[arrayIndex+1] != undefined) {
+
+          array[arrayIndex] = array[arrayIndex+1];
+          array[arrayIndex+1] = undefined;
+
+        }
+
+      }else{
+
+        if(array[arrayIndex] > array[arrayIndex+1]) {
+
+          buffer = array[arrayIndex];
+          array[arrayIndex] = array[arrayIndex+1];
+          array[arrayIndex+1] = buffer;
+
+        }
+
+      }
+
+    }
+
+
+    /*Sorting numbers in a descending order*/
+    function descendingNumberSort(array, arrayIndex, charCodeAtIndex) {
+
+      if(array[arrayIndex] === undefined || array[arrayIndex+1] === undefined) {
+
+        if(array[arrayIndex] === undefined && array[arrayIndex+1] != undefined) {
+
+          array[arrayIndex] = array[arrayIndex+1];
+          array[arrayIndex+1] = undefined;
+
+        }
+
+      }else{
+
+        if(array[arrayIndex] < array[arrayIndex+1]) {
+
+          buffer = array[arrayIndex];
+          array[arrayIndex] = array[arrayIndex+1];
+          array[arrayIndex+1] = buffer;
+
+        }
+
+      }
+
+    }
+
+    /*Default case: sort elements of the array in ascending order*/
+    if(arguments.length < 2) {
+
+      for (let i = 0; i < array.length; i++) {
+      
+        for (let j = 0; j < array.length-1; j++) {
+        
+          ascendingRecursiveCheck(array, j, 0);
+        
+        }
+      
+      }
+
+    /*If there is a callback for string sort, then sort elements of the array according to the value returned by the callback*/
+    }else if(arguments.length < 3){
+
+      callbackReturnedValue = callbackStringCompare();
+
+      if(callbackReturnedValue < 0) {
+
+        for (let i = 0; i < array.length; i++) {
+        
+          for (let j = 0; j < array.length-1; j++) {
+          
+            ascendingRecursiveCheck(array, j, 0);
+          
+          }
+        
+        }
+
+      }else if(callbackReturnedValue > 0) {
+
+        for (let i = 0; i < array.length; i++) {
+        
+          for (let j = 0; j < array.length-1; j++) {
+          
+            descendingRecursiveCheck(array, j, 0);
+          
+          }
+        
+        }
+
+      }
+
+    }else{
+
+      callbackReturnedValue = callbackNumberCompare(1,2);
+
+      if(callbackReturnedValue < 0) {
+
+        for (let i = 0; i < array.length; i++) {
+        
+          for (let j = 0; j < array.length-1; j++) {
+          
+            ascendingNumberSort(array, j, 0);
+          
+          }
+        
+        }
+
+      }else if(callbackReturnedValue > 0) {
+
+        for (let i = 0; i < array.length; i++) {
+        
+          for (let j = 0; j < array.length-1; j++) {
+          
+            descendingNumberSort(array, j, 0);
+          
+          }
+        
+        }
+
+      }
+
+    }
+
+
+    return array;
+
+  }
+
+  tests({
+
+    //The sort() method sorts the elements of an array in place and returns the sorted array.
+
+    'Returns an array': function() {
+      let array = ['a', 'b', 'B', 0.5];
+
+      eq(Array.isArray(mySort(array)), true);
+    },
+    'If compareFunction is not supplied, all non-undefined array elements are sorted by converting them to strings and comparing strings in UTF-16 code units order': function() {
+      let array = ['a', 'b', 'B', 0.5];
+
+      eq(JSON.stringify(mySort(array)), JSON.stringify(array.sort()));
+    },
+    'All undefined elements are sorted to the end of the array': function() {
+      let array = [undefined, 'a', undefined, 'b', undefined, 'B', 0.5];
+
+      eq(JSON.stringify(mySort(array)), JSON.stringify(array.sort()));
+    },
+    'Numbers sorted in ascending order': function() {
+      let array = [0.5, 5, 1111111.01, 1111114, 1111111.02, 121];
+      let returnedArray = mySort(array, 'unusedCallback', function(a,b){
+        return a - b;
+      });
+
+      eq(JSON.stringify(returnedArray), JSON.stringify(array.sort((a,b)=>a-b)));
+    },
+    'Numbers sorted in descending order': function() {
+      let array = [0.5, 5, 1111111.01, 1111114, 1111111.02, 121];
+      let returnedArray = mySort(array, 'unusedCallback', function(a,b){
+        return b - a;
+      });
+
+      eq(JSON.stringify(returnedArray), JSON.stringify(array.sort((a,b)=>b-a)));
+    }
+
+  });
+
+</script>
